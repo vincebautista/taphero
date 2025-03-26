@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:learnflame/main.dart';
 import 'package:learnflame/models/kalabanList.dart';
 
@@ -17,10 +18,14 @@ class Kalaban extends SpriteComponent with TapCallbacks, HasGameRef<MyGame> {
     size = Vector2(size[0], size[0] * 1.5);
     position = Vector2(size[0] / 2, mPosY);
     anchor = Anchor.center;
+
+    await FlameAudio.audioCache.load('attack.mp3');
   }
 
   @override
   void onTapDown(TapDownEvent event) async {
+    FlameAudio.play('attack.mp3');
+
     gameRef.updateLifeBar();
     sprite = await Sprite.load(
         'characters/${KALABAN[kalabanIndex]["name"]} dmg.png');

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:learnflame/models/armas.dart';
@@ -51,6 +52,14 @@ class MyGame extends FlameGame {
   @override
   Future<void> onLoad() async {
     super.onLoad();
+
+    await FlameAudio.audioCache.loadAll([
+      'bg_music.MP3',
+      'death.mp3',
+      'gameover.mp3',
+    ]);
+
+    FlameAudio.bgm.play('bg_music.MP3', volume: 0.5);
 
     int randI = Random().nextInt(KALABAN.length - 1);
     kalaban.kalabanIndex = randI;
@@ -148,6 +157,8 @@ class MyGame extends FlameGame {
 
   void updateLifeBar() async {
     if (energy <= 0) {
+      FlameAudio.play('gameover.mp3');
+      FlameAudio.bgm.stop();
       energy--;
       over = GameOver(level.level);
       add(over);
@@ -173,6 +184,8 @@ class MyGame extends FlameGame {
 
         lifeBar.size = Vector2(lifeBar.size[0] + truedmg / truedef, 5);
       } else if (energy > 0) {
+        FlameAudio.play('death.mp3');
+
         int randI = Random().nextInt(KALABAN.length - 1);
         kalaban.kalabanIndex = randI;
         kalabanIdex = randI;
@@ -188,6 +201,8 @@ class MyGame extends FlameGame {
   }
 
   void restartGame() async {
+    FlameAudio.bgm.stop();
+
     damage = 25;
     kalabanDef = 1;
     kalabanIdex;
@@ -198,6 +213,8 @@ class MyGame extends FlameGame {
     lifeBar.size = Vector2(0, 5);
 
     remove(over);
+
+    FlameAudio.bgm.play('bg_music.MP3', volume: 0.5);
   }
 
   void showCard() {
